@@ -2,7 +2,8 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { onAuthStateChanged, signOut as authSignOut } from "firebase/auth";
 
 import { toast } from "react-toastify";
-import { auth } from "./config.firebase";
+import { auth, db } from "./config.firebase";
+import { addDoc, collection } from "firebase/firestore";
 
 const AuthUserContext = createContext({
     authUser: null,
@@ -28,7 +29,13 @@ export default function useFirebaseAuth() {
             uid: user.uid,
             email: user.email,
         });
+
         setIsLoading(false);
+        const result = await addDoc(collection(db, 'users'), {
+            uid: user.uid,
+            email: user.email,
+        })
+        console.log(result)
     };
 
     const signOut = () => {
