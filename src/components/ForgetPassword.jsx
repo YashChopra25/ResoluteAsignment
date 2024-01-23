@@ -4,7 +4,9 @@ import Loader from './Loader'
 import validator from 'validator'
 import ToastError, { ToastSuccess, ToastWorn } from '../utility/toastify'
 import { ResetPasswordViaEmail } from '../firebase/services'
-import { getAuth, sendPasswordResetEmail } from "firebase/auth";
+
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from 'react-toastify'
 
 const ForgetPassword = () => {
     const { authUser, isLoading } = useAuth()
@@ -61,6 +63,7 @@ const ForgetPassword = () => {
 
 
             </div>
+            <ToastContainer/>
         </section>
     )
 }
