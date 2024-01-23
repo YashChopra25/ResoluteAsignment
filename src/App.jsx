@@ -181,7 +181,12 @@ function App() {
               <option selected value='demo@gmail.com'>Asign Task to someone</option>
               {
                 userList?.map((user) => {
-                  if (user.email && authUser.email != user.email)
+                  if (user.email)
+                  if(authUser.email == user.email){
+                    return (
+                      <option value={user.email}>You</option>
+                    )
+                  }
                     return (
                       <option value={user.email}>{user.email}</option>
                     )
