@@ -20,7 +20,7 @@ const Login = () => {
   const navigate = useNavigate()
   const HandleChangeInput = (e) => {
     const { name, value } = e.target
-    console.log(name + " " + value)
+   
     setUserInfo((prev) => (
       { ...prev, [name]: value }
     ))
@@ -47,7 +47,7 @@ const Login = () => {
       return
     }
     const loginuser = await LogInUser(userInfo);
-    console.log(loginuser)
+   
     if (loginuser.status != 200) {
       ToastError({ message: loginuser.messsage })
       return

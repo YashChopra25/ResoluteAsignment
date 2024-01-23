@@ -5,11 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import Loader from './components/Loader';
 import { MdDeleteForever } from "react-icons/md";
 import {
-  collection, addDoc, getDocs, where, query, deleteDoc, updateDoc, doc, getDoc,
+  collection, addDoc, getDocs, query, deleteDoc, updateDoc, doc, getDoc,
 } from "firebase/firestore";
 
-import { auth, db } from './firebase/config.firebase';
+import { db } from './firebase/config.firebase';
 import ToastError from './utility/toastify';
+import { ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 function App() {
   const { authUser, isLoading } = useAuth();
   const navigate = useNavigate();
@@ -36,13 +38,13 @@ function App() {
     }
   }, [authUser, isLoading]);
 
-  const EmptyTod = () => {
+  const EmptyTodoError = () => {
     ToastError({ message: "Empty Todo can't be added" })
   }
   const addToDo = async () => {
     try {
       if (!todoInput.trim().length) {
-        EmptyTod();
+        EmptyTodoError();
         return;
       }
       await addDoc(collection(db, "todos"), {
@@ -51,7 +53,7 @@ function App() {
         title: todoTitle,
         description: todoInput,
         dueDate: TodoDate,
-        assignedUser: Assignuser, // Store assigned user ID here
+        assignedUser: Assignuser,
         createdBy: authUser.uid,
       });
       fetchTodos(authUser.uid);
@@ -66,9 +68,7 @@ function App() {
   const deleteTodo = async (docId) => {
     try {
       const DocumentData = await getDoc(doc(db, 'todos', docId))
-      console.log(authUser.uid)
       const { createdBy, assignedUser } = DocumentData.data()
-      console.log(DocumentData.data())
 
       if (createdBy == authUser.uid || assignedUser == authUser.email) {
         await deleteDoc(doc(db, "todos", docId));
@@ -95,12 +95,12 @@ function App() {
       });
       setTodos(data);
     } catch (error) {
-      ToastError({message:"Something went wrong file fetching the data"})
+      ToastError({ message: "Something went wrong file fetching the data" })
       console.error(error);
     }
   };
 
-  const markAsCompletedHandler = async (event, docId) => {
+  const UpdateData = async (event, docId) => {
     try {
       const docRef = doc(db, "todos", docId);
       await updateDoc(docRef, {
@@ -142,7 +142,7 @@ function App() {
         <div className="bg-white -m-6 p-3 sticky top-0">
           <div className="flex justify-center flex-col items-center">
             <h1 className="text-5xl md:text-5xl font-bold">
-            Task Management System
+              Task Management System
             </h1>
           </div>
           <div className="flex items-center gap-4 mt-10 flex-col w-full">
@@ -178,7 +178,7 @@ function App() {
               />
             </div>
             <select id="users" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onChange={(e) => setAssignUser(e.target.value)}>
-              <option selected value='Z9z2hGnPqlMsqcRvrskzFD4anut1'>Asign Task to someone</option>
+              <option selected value='demo@gmail.com'>Asign Task to someone</option>
               {
                 userList?.map((user) => {
                   if (user.email && authUser.email != user.email)
@@ -206,10 +206,6 @@ function App() {
           >
 
           </div>
-
-
-
-
           {todos.length > 0 &&
             todos.map((todo, index) => (
               <div
@@ -219,12 +215,12 @@ function App() {
                 <ul class="w-full  bg-white rounded-lg shadow divide-gray-200 ">
                   <li class="px-6 py-4">
                     <p>
-                      Assigned To: {(authUser.email == todo.assignedUser) ? "You" : todo.assignedUser
+                      Assigned To: {(authUser.email == todo.assignedUser) ? "You" : todo?.assignedUser
                       }
                     </p>
                     <div class="flex justify-between">
                       <span class="font-semibold text-lg">{todo.title}</span>
-                      <span class="text-gray-500 text-xs"> Due Date:- {todo?.dueDate} + {todo?.assignedUser} </span>
+                      <span class="text-gray-500 text-xs"> Due Date:- {todo?.dueDate} </span>
                     </div>
                     <p class="text-gray-700 break-words">{todo.description}</p>
 
@@ -241,6 +237,7 @@ function App() {
             ))}
         </div>
       </div >
+      <ToastContainer />
     </main >
   );
 }

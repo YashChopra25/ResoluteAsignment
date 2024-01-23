@@ -20,6 +20,7 @@ export default function useFirebaseAuth() {
     };
 
     const authStateChanged = async (user) => {
+        console.log(user)
         setIsLoading(true);
         if (!user) {
             clear();
@@ -31,11 +32,7 @@ export default function useFirebaseAuth() {
         });
 
         setIsLoading(false);
-        const result = await addDoc(collection(db, 'users'), {
-            uid: user.uid,
-            email: user.email,
-        })
-        console.log(result)
+       
     };
 
     const signOut = () => {

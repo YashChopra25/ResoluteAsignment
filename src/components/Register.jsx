@@ -6,6 +6,8 @@ import { ToastContainer, toast } from 'react-toastify'
 import { createUser } from '../firebase/services'
 import { useAuth } from '../firebase/auth.firebase'
 import Loader from './Loader'
+import { addDoc, collection } from 'firebase/firestore'
+import { db } from '../firebase/config.firebase'
 
 const Register = () => {
   const [userInfo, setUserInfo] = useState({
@@ -72,6 +74,15 @@ const Register = () => {
           password: "",
           confirmPassword: ""
         })
+
+        console.log(createUserResult.messsage.uid)
+        console.log(createUserResult.messsage.email)
+        console.log(authUser)
+        const result = await addDoc(collection(db, 'users'), {
+          uid: createUserResult.messsage.uid,
+          email: createUserResult.messsage.email,
+        })
+        console.log(result)
 
       }
 
